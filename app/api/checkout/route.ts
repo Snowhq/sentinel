@@ -7,6 +7,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Contract code required" }, { status: 400 });
   }
   
+  console.log("Creating Locus checkout session...");
+  
   const res = await fetch("https://beta-api.paywithlocus.com/v1/checkout-session", {
     method: "POST",
     headers: {
@@ -18,15 +20,23 @@ export async function POST(req: NextRequest) {
       merchantWallet: process.env.NEXT_PUBLIC_LOCUS_MERCHANT_WALLET,
       metadata: {
         type: "audit",
-        contractCode: code.substring(0, 500) // First 500 chars for reference
+        contractCode: code.substring(0, 500)
       }
     })
   });
   
-  const data = await res.json();
+  const text = await res.text();
+  console.log("Locus response:", text);
+  
+  if (!res.ok) {
+    console.error("Locus error:", text);
+    return NextResponse.json({ error: "Checkout failed: " + text.substring(0, 200) }, { status: 500 });
+  }
+  
+  const data = JSON.parse(text);
   
   if (!data.checkoutUrl) {
-    console.error("Locus error:", data);
+    console.error("No checkoutUrl in response:", data);
     return NextResponse.json({ error: "Checkout failed" }, { status: 500 });
   }
   
