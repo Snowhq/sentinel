@@ -18,20 +18,30 @@ export async function auditContract(code: string) {
 4. List of vulnerabilities found
 5. Gas optimization suggestions
 6. Code improvements
+7. Protocol comparison data
 
 Contract:
 \`\`\`solidity
 ${code}
 \`\`\`
 
-Return as JSON with this structure:
+Return ONLY valid JSON with this exact structure (no markdown, no backticks):
 {
   "securityScore": number,
   "gasScore": number,
   "qualityScore": number,
   "vulnerabilities": [{ "severity": "high|medium|low", "issue": string, "line": number, "fix": string }],
   "gasOptimizations": [{ "issue": string, "savings": string, "fix": string }],
-  "improvements": [string]
+  "improvements": [string],
+  "comparison": {
+    "protocols": [
+      { "name": "Uniswap V3", "security": 95, "gas": 88, "quality": 92 },
+      { "name": "Aave V3", "security": 97, "gas": 85, "quality": 94 },
+      { "name": "Compound", "security": 93, "gas": 82, "quality": 90 },
+      { "name": "Your Contract", "security": YOUR_SECURITY_SCORE, "gas": YOUR_GAS_SCORE, "quality": YOUR_QUALITY_SCORE }
+    ],
+    "insights": [string, string, string]
+  }
 }`
     }]
   });

@@ -7,34 +7,35 @@ export default function Home() {
   const [report, setReport] = useState<any>(null);
 
   async function handleAudit() {
-    if (!code.trim()) {
-      alert("Paste your contract code first");
-      return;
-    }
-    
-    setLoading(true);
-    
-    try {
-      const res = await fetch("/api/audit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code })
-      });
-      
-      const data = await res.json();
-      
-      if (data.report) {
-        setReport(data.report);
-      } else {
-        alert("Audit failed: " + (data.error || "Unknown error"));
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error: " + err);
-    }
-    
-    setLoading(false);
+  if (!code.trim()) {
+    alert("Paste your contract code first");
+    return;
   }
+  
+  setLoading(true);
+  
+  try {
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code })
+    });
+    
+    const data = await res.json();
+    
+    if (data.checkoutUrl) {
+      window.open(data.checkoutUrl, "_blank");
+      alert("Complete payment in the new tab, then return here to run your audit");
+    } else {
+      alert("Checkout failed: " + (data.error || "Unknown error"));
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Error: " + err);
+  }
+  
+  setLoading(false);
+}
 
   return (
     <main style={{ minHeight: "100vh", background: "#0a0a0a", fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif" }}>

@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       merchantWallet: process.env.NEXT_PUBLIC_LOCUS_MERCHANT_WALLET,
       metadata: {
         type: "audit",
-        codeLength: code.length
+        contractCode: code.substring(0, 500) // First 500 chars for reference
       }
     })
   });
@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
   const data = await res.json();
   
   if (!data.checkoutUrl) {
+    console.error("Locus error:", data);
     return NextResponse.json({ error: "Checkout failed" }, { status: 500 });
   }
   
